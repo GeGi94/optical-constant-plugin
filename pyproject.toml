@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "optical-constant-plugin"
+version = "0.1.0"
+description = "Optical constant plugin"
+authors = [{name = "Gemma"}]
+requires-python = ">=3.10"
+dependencies = ["nomad-lab"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.entry-points."nomad.plugin"]
+test_schema = "optical_constant_plugin.schema_packages.plugin:test_schema"
