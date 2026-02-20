@@ -1,12 +1,13 @@
 from nomad.config.models.plugins import AppEntryPoint
+from nomad.config.models.ui import App
 
-class OpticalAppEntryPoint(AppEntryPoint):
-    name: str = "optical_app"
-    description: str = "Stub app for optical constants."
-
-    def load(self):
-        # Stub: nessuna UI custom ancora.
-        # Restituiamo un dict vuoto per non rompere la discovery.
-        return {}
-
-optical_app = OpticalAppEntryPoint()
+optical_app = AppEntryPoint(
+    name="optical_app",
+    description="Stub app for optical constants.",
+    app=App(
+        label="Optical constants",
+        path="optical-constants",
+        category="Materials",
+        description="Stub UI for optical constants."
+    ),
+)
