@@ -1,14 +1,20 @@
 from nomad.config.models.plugins import NormalizerEntryPoint
+from nomad.normalizing.normalizer import Normalizer
+
+
+class OpticalNormalizer(Normalizer):
+    def normalize(self, archive, logger):
+        # Stub: non fa nulla
+        return
+
 
 class OpticalNormalizerEntryPoint(NormalizerEntryPoint):
     name: str = "optical_normalizer"
     description: str = "Stub normalizer for optical constants."
 
     def load(self):
-        # Deve restituire un normalizer callable/oggetto.
-        # Stub: non fa nulla.
-        def _stub_normalizer(*args, **kwargs):
-            return
-        return _stub_normalizer
+        # DEVE ritornare un'istanza di Normalizer
+        return OpticalNormalizer()
+
 
 optical_normalizer = OpticalNormalizerEntryPoint()
