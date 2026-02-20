@@ -1,24 +1,19 @@
 from nomad.metainfo import SchemaPackage, MSection, Quantity, Section
-from nomad.config.models.plugins import SchemaPackageEntryPoint  # <-- questa è la chiave
+from nomad.config.models.plugins import SchemaPackageEntryPoint
 
 m_package = SchemaPackage()
-
 
 class TestSection(MSection):
     m_def = Section(label="TestSection")
     name = Quantity(type=str, description="A simple test quantity.")
 
-
-# registra le sezioni nel package
 m_package.__init_metainfo__()
 
 class TestSchema(SchemaPackageEntryPoint):
-    name: str = "test_schema"
-    description: str = "Minimal test schema package for verifying plugin loading."
+    name: str = "optical_schema"
+    description: str = "Stub schema package for optical constants."
 
     def load(self):
         return m_package
 
-
-
-test_schema = TestSchema()
+optical_schema = TestSchema()
