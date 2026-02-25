@@ -14,7 +14,7 @@ class OpticalNormalizerEntryPoint(NormalizerEntryPoint):
                 if data is None:
                     return
 
-                # default values (per evitare None in UI)
+                # init default
                 if hasattr(data, "has_nk_any"):
                     data.has_nk_any = False
                 if hasattr(data, "wavelength_plot"):
@@ -28,7 +28,6 @@ class OpticalNormalizerEntryPoint(NormalizerEntryPoint):
                 if not datasets:
                     return
 
-                # trova il primo dataset valido e lo usa per has_nk_any + plot principale
                 for ds in datasets:
                     wl = getattr(ds, "wavelength", None)
                     n = getattr(ds, "n", None)
@@ -40,23 +39,13 @@ class OpticalNormalizerEntryPoint(NormalizerEntryPoint):
                         and len(n) == len(wl)
                         and len(k) == len(wl)
                     )
-
                     if valid:
                         data.has_nk_any = True
-
-                        # copia arrays per plot principale
                         data.wavelength_plot = list(wl)
                         data.n_plot = list(n)
                         data.k_plot = list(k)
-
-                        logger.info(
-                            "Computed has_nk_any and populated main plot arrays",
-                            has_nk_any=True,
-                            n_points=len(wl),
-                        )
-                        return
-
-                logger.info("Computed has_nk_any", has_nk_any=False)
+                        logger.info("Populated main plot arrays", n_points=len(wl))
+                        break
 
         return OpticalNormalizer()
 
