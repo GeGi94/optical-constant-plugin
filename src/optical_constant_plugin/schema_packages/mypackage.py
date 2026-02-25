@@ -11,14 +11,57 @@ class OpticalDataset(PlotSection, MSection):
         label="OpticalDataset",
         a_plotly_graph_object=[
             {
-                "label": "n,k vs wavelength (dataset)",
+                "label": "Optical constants (dataset)",
                 "data": [
-                    {"type": "scatter", "mode": "lines", "name": "n", "x": "#wavelength", "y": "#n"},
-                    {"type": "scatter", "mode": "lines", "name": "k", "x": "#wavelength", "y": "#k"},
+                    {
+                        "type": "scatter",
+                        "mode": "lines",
+                        "name": "n",
+                        "x": "#wavelength",
+                        "y": "#n",
+                        "line": {"width": 2},
+                    },
+                    {
+                        "type": "scatter",
+                        "mode": "lines",
+                        "name": "k",
+                        "x": "#wavelength",
+                        "y": "#k",
+                        "yaxis": "y2",
+                        "line": {"width": 2},
+                    },
                 ],
                 "layout": {
-                    "xaxis": {"title": {"text": "Wavelength (nm)"}},
-                    "yaxis": {"title": {"text": "Value"}},
+                    "title": {"text": "n and k vs wavelength", "x": 0.02, "xanchor": "left"},
+                    "font": {"size": 16},
+                    "hovermode": "x unified",
+                    "margin": {"l": 70, "r": 70, "t": 60, "b": 60},
+                    "legend": {
+                        "orientation": "h",
+                        "x": 0.02,
+                        "y": 1.12,
+                        "xanchor": "left",
+                    },
+                    "xaxis": {
+                        "title": {"text": "Wavelength (nm)"},
+                        "showgrid": True,
+                        "zeroline": False,
+                        "ticks": "outside",
+                    },
+                    "yaxis": {
+                        "title": {"text": "Refractive index n"},
+                        "showgrid": True,
+                        "zeroline": False,
+                        "ticks": "outside",
+                    },
+                    "yaxis2": {
+                        "title": {"text": "Extinction coefficient k"},
+                        "overlaying": "y",
+                        "side": "right",
+                        "showgrid": False,
+                        "zeroline": False,
+                        "ticks": "outside",
+                    },
                 },
                 "open": False,
             }
@@ -31,7 +74,7 @@ class OpticalDataset(PlotSection, MSection):
     temperature = Quantity(type=float, unit="K", description="Measurement temperature (optional).")
     bandgap = Quantity(type=float, unit="eV", description="Bandgap Eg associated with this dataset (optional).")
 
-    # Tolgo unit="nm" per evitare la scala errata (400 -> 40000)
+    # unit="nm" rimosso per evitare conversioni/scala errate (es. 400 -> 40000)
     wavelength = Quantity(type=float, shape=["*"], description="Wavelength axis (nm).")
     n = Quantity(type=float, shape=["*"], description="Refractive index n(λ).")
     k = Quantity(type=float, shape=["*"], description="Extinction coefficient k(λ).")
@@ -42,14 +85,57 @@ class OpticalConstantsEntry(PlotSection, EntryData):
         label="OpticalConstantsEntry",
         a_plotly_graph_object=[
             {
-                "label": "n,k vs wavelength (main)",
+                "label": "Optical constants (main)",
                 "data": [
-                    {"type": "scatter", "mode": "lines", "name": "n", "x": "#wavelength_plot", "y": "#n_plot"},
-                    {"type": "scatter", "mode": "lines", "name": "k", "x": "#wavelength_plot", "y": "#k_plot"},
+                    {
+                        "type": "scatter",
+                        "mode": "lines",
+                        "name": "n",
+                        "x": "#wavelength_plot",
+                        "y": "#n_plot",
+                        "line": {"width": 2},
+                    },
+                    {
+                        "type": "scatter",
+                        "mode": "lines",
+                        "name": "k",
+                        "x": "#wavelength_plot",
+                        "y": "#k_plot",
+                        "yaxis": "y2",
+                        "line": {"width": 2},
+                    },
                 ],
                 "layout": {
-                    "xaxis": {"title": {"text": "Wavelength (nm)"}},
-                    "yaxis": {"title": {"text": "Value"}},
+                    "title": {"text": "n and k vs wavelength", "x": 0.02, "xanchor": "left"},
+                    "font": {"size": 16},
+                    "hovermode": "x unified",
+                    "margin": {"l": 70, "r": 70, "t": 60, "b": 60},
+                    "legend": {
+                        "orientation": "h",
+                        "x": 0.02,
+                        "y": 1.12,
+                        "xanchor": "left",
+                    },
+                    "xaxis": {
+                        "title": {"text": "Wavelength (nm)"},
+                        "showgrid": True,
+                        "zeroline": False,
+                        "ticks": "outside",
+                    },
+                    "yaxis": {
+                        "title": {"text": "Refractive index n"},
+                        "showgrid": True,
+                        "zeroline": False,
+                        "ticks": "outside",
+                    },
+                    "yaxis2": {
+                        "title": {"text": "Extinction coefficient k"},
+                        "overlaying": "y",
+                        "side": "right",
+                        "showgrid": False,
+                        "zeroline": False,
+                        "ticks": "outside",
+                    },
                 },
                 "open": True,
             }
