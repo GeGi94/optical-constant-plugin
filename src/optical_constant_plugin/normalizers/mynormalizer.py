@@ -1,8 +1,9 @@
 from nomad.config.models.plugins import NormalizerEntryPoint
 
+
 class OpticalNormalizerEntryPoint(NormalizerEntryPoint):
     name: str = "optical_normalizer"
-    description: str = "Compute has_nk_any for optical constants."
+    description: str = "Compute has_nk_any and populate main plot arrays."
 
     def load(self):
         from nomad.normalizing.normalizer import Normalizer
@@ -10,15 +11,24 @@ class OpticalNormalizerEntryPoint(NormalizerEntryPoint):
         class OpticalNormalizer(Normalizer):
             def normalize(self, archive, logger):
                 data = getattr(archive, "data", None)
-                if data is None or not hasattr(data, "has_nk_any"):
+                if data is None:
                     return
+
+                # default values (per evitare None in UI)
+                if hasattr(data, "has_nk_any"):
+                    data.has_nk_any = False
+                if hasattr(data, "wavelength_plot"):
+                    data.wavelength_plot = []
+                if hasattr(data, "n_plot"):
+                    data.n_plot = []
+                if hasattr(data, "k_plot"):
+                    data.k_plot = []
 
                 datasets = getattr(data, "datasets", None)
                 if not datasets:
-                    data.has_nk_any = False
                     return
 
-                has_any = False
+                # trova il primo dataset valido e lo usa per has_nk_any + plot principale
                 for ds in datasets:
                     wl = getattr(ds, "wavelength", None)
                     n = getattr(ds, "n", None)
@@ -30,13 +40,25 @@ class OpticalNormalizerEntryPoint(NormalizerEntryPoint):
                         and len(n) == len(wl)
                         and len(k) == len(wl)
                     )
-                    if valid:
-                        has_any = True
-                        break
 
-                data.has_nk_any = bool(has_any)
-                logger.info("Computed has_nk_any", has_nk_any=data.has_nk_any)
+                    if valid:
+                        data.has_nk_any = True
+
+                        # copia arrays per plot principale
+                        data.wavelength_plot = list(wl)
+                        data.n_plot = list(n)
+                        data.k_plot = list(k)
+
+                        logger.info(
+                            "Computed has_nk_any and populated main plot arrays",
+                            has_nk_any=True,
+                            n_points=len(wl),
+                        )
+                        return
+
+                logger.info("Computed has_nk_any", has_nk_any=False)
 
         return OpticalNormalizer()
+
 
 optical_normalizer = OpticalNormalizerEntryPoint()
