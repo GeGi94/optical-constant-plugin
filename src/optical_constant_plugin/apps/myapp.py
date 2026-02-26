@@ -1,6 +1,7 @@
 from nomad.config.models.plugins import AppEntryPoint
 from nomad.config.models.ui import (
     App,
+    Axis,
     Column,
     SearchQuantities,
     Dashboard,
@@ -11,15 +12,16 @@ from nomad.config.models.ui import (
     MenuItemHistogram,
 )
 
-
 # =========================
-# OPTICAL APP (UNCHANGED)
+# OPTICAL APP
 # =========================
 
 schema_def_opt = "optical_constant_plugin.schema_packages.mypackage.OpticalConstantsEntry"
 
+
 def qopt(name: str) -> str:
     return f"data.{name}#{schema_def_opt}"
+
 
 optical_app = AppEntryPoint(
     name="optical_app",
@@ -29,22 +31,14 @@ optical_app = AppEntryPoint(
         path="optical-properties",
         category="Materials",
         description="Browse optical n,k datasets and filter by material.",
-
         search_quantities=SearchQuantities(
             include=[
                 qopt("material"),
                 qopt("reference"),
             ]
         ),
-
-        filters_locked={
-            "section_defs.definition_qualified_name": [schema_def_opt]
-        },
-
-        # niente filtri a sinistra
+        filters_locked={"section_defs.definition_qualified_name": [schema_def_opt]},
         menu=None,
-
-        # widget centrale "tabella/lista" dei materiali
         dashboard=Dashboard(
             widgets=[
                 WidgetTerms(
@@ -54,7 +48,6 @@ optical_app = AppEntryPoint(
                 ),
             ]
         ),
-
         columns=[
             Column(quantity="entry_name", selected=True),
             Column(quantity=qopt("material"), label="Material", selected=True),
@@ -64,15 +57,16 @@ optical_app = AppEntryPoint(
     ),
 )
 
-
 # =========================
-# ELECTRICAL APP (NEW)
+# ELECTRICAL APP
 # =========================
 
 schema_def_el = "optical_constant_plugin.schema_packages.mypackage.ElectricalConstantsEntry"
 
+
 def qel(name: str) -> str:
     return f"data.{name}#{schema_def_el}"
+
 
 electrical_app = AppEntryPoint(
     name="electrical_app",
@@ -82,7 +76,6 @@ electrical_app = AppEntryPoint(
         path="electrical-properties",
         category="Materials",
         description="Browse electrical datasets (.dat/.csv) and filter by material.",
-
         search_quantities=SearchQuantities(
             include=[
                 qel("material"),
@@ -96,21 +89,16 @@ electrical_app = AppEntryPoint(
                 qel("eps_r"),
             ]
         ),
-
-        filters_locked={
-            "section_defs.definition_qualified_name": [schema_def_el]
-        },
-
+        filters_locked={"section_defs.definition_qualified_name": [schema_def_el]},
         menu=Menu(
             size="sm",
             items=[
                 MenuItemTerms(search_quantity=qel("material"), options=50),
-                MenuItemHistogram(search_quantity=qel("Eg")),
-                MenuItemHistogram(search_quantity=qel("chi")),
-                MenuItemHistogram(search_quantity=qel("eps_r")),
+                MenuItemHistogram(x=Axis(search_quantity=qel("Eg"))),
+                MenuItemHistogram(x=Axis(search_quantity=qel("chi"))),
+                MenuItemHistogram(x=Axis(search_quantity=qel("eps_r"))),
             ],
         ),
-
         dashboard=Dashboard(
             widgets=[
                 WidgetTerms(
@@ -120,7 +108,6 @@ electrical_app = AppEntryPoint(
                 ),
             ]
         ),
-
         columns=[
             Column(quantity="entry_name", selected=True),
             Column(quantity=qel("material"), label="Material", selected=True),
@@ -137,12 +124,9 @@ electrical_app = AppEntryPoint(
     ),
 )
 
-
 # =========================
-# MATERIALS APP (NEW, GROUPING VIA FILTERS)
+# MATERIALS APP (UNIFIED VIEW)
 # =========================
-# Nota: per NOMAD le quantities sono schema-specific, quindi qui mettiamo due Terms separati
-# (ottico ed elettrico) ma nella stessa pagina.
 
 materials_app = AppEntryPoint(
     name="materials_app",
@@ -152,7 +136,6 @@ materials_app = AppEntryPoint(
         path="materials",
         category="Materials",
         description="Unified view: filter by material to see optical and electrical entries together.",
-
         search_quantities=SearchQuantities(
             include=[
                 # optical
@@ -165,23 +148,19 @@ materials_app = AppEntryPoint(
                 qel("eps_r"),
             ]
         ),
-
-        # lock to BOTH entry types
         filters_locked={
             "section_defs.definition_qualified_name": [schema_def_opt, schema_def_el]
         },
-
         menu=Menu(
             size="sm",
             items=[
                 # Two material filters (one per schema)
                 MenuItemTerms(search_quantity=qopt("material"), options=50),
                 MenuItemTerms(search_quantity=qel("material"), options=50),
-                MenuItemHistogram(search_quantity=qel("Eg")),
-                MenuItemHistogram(search_quantity=qel("chi")),
+                MenuItemHistogram(x=Axis(search_quantity=qel("Eg"))),
+                MenuItemHistogram(x=Axis(search_quantity=qel("chi"))),
             ],
         ),
-
         dashboard=Dashboard(
             widgets=[
                 WidgetTerms(
@@ -196,10 +175,8 @@ materials_app = AppEntryPoint(
                 ),
             ]
         ),
-
         columns=[
             Column(quantity="entry_name", selected=True),
-            # show both (one will be empty depending on schema)
             Column(quantity=qopt("material"), label="Material (opt)", selected=True),
             Column(quantity=qel("material"), label="Material (el)", selected=True),
             Column(quantity=qel("Eg"), label="Eg (eV)", selected=False),
