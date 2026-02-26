@@ -143,7 +143,25 @@ class OpticalConstantsEntry(PlotSection, EntryData):
     )
 
     material = Quantity(type=str, description="Material name (e.g., ITO, ZnO, C60).")
-    has_nk_any = Quantity(type=bool)
+    reference = Quantity(
+    type=str,
+    description="Reference for the optical constants (DOI if available, otherwise source name)."
+    )
+    n_400nm = Quantity(type=float, description="n at 400 nm (interpolated).")
+    k_400nm = Quantity(type=float, description="k at 400 nm (interpolated).")
+
+    n_700nm = Quantity(type=float, description="n at 700 nm (interpolated).")
+    k_700nm = Quantity(type=float, description="k at 700 nm (interpolated).")
+
+    n_800nm = Quantity(type=float, description="n at 800 nm (interpolated).")
+    k_800nm = Quantity(type=float, description="k at 800 nm (interpolated).")
+
+    n_900nm = Quantity(type=float, description="n at 900 nm (interpolated).")
+    k_900nm = Quantity(type=float, description="k at 900 nm (interpolated).")
+
+    n_1200nm = Quantity(type=float, description="n at 1200 nm (interpolated).")
+    k_1200nm = Quantity(type=float, description="k at 1200 nm (interpolated).")
+     
 
     # Copiati dal primo dataset valido per mostrare un plot in overview
     wavelength_plot = Quantity(type=float, shape=["*"], description="Wavelength for main plot (nm).")

@@ -3,14 +3,21 @@ from nomad.config.models.ui import (
     App,
     Column,
     Menu,
+    MenuItem,
     MenuItemTerms,
     SearchQuantities,
     Dashboard,
     WidgetTerms,
+    WidgetScatterPlot,
     Layout,
 )
 
 schema_def = "optical_constant_plugin.schema_packages.mypackage.OpticalConstantsEntry"
+
+
+def q(name: str) -> str:
+    return f"data.{name}#{schema_def}"
+
 
 optical_app = AppEntryPoint(
     name="optical_app",
@@ -21,46 +28,96 @@ optical_app = AppEntryPoint(
         category="Materials",
         description="Browse optical n,k datasets and filter by material.",
 
-        # rende disponibili in Explore le quantità scalari del tuo schema
+        # Quantities available in Explore (filters, columns, widgets)
         search_quantities=SearchQuantities(
             include=[
-                f"data.material#{schema_def}",
-                f"data.has_nk_any#{schema_def}",
+                q("material"),
+                q("reference"),
+
+                # fixed-wavelength points for scatter plots
+                q("n_400nm"),  q("k_400nm"),
+                q("n_700nm"),  q("k_700nm"),
+                q("n_800nm"),  q("k_800nm"),
+                q("n_900nm"),  q("k_900nm"),
+                q("n_1200nm"), q("k_1200nm"),
             ]
         ),
 
-        # limita i risultati alle entry che sono del tuo tipo
+        # Only show entries of this schema type
         filters_locked={
             "section_defs.definition_qualified_name": [schema_def]
         },
 
-        # tabella risultati
+        # Results table: entry name, material, reference
         columns=[
             Column(quantity="entry_name", selected=True),
-            Column(quantity=f"data.material#{schema_def}", label="Material", selected=True),
-            Column(quantity=f"data.has_nk_any#{schema_def}", label="Has n,k (any)", selected=True),
+            Column(quantity=q("material"), label="Material", selected=True),
+            Column(quantity=q("reference"), label="Reference", selected=True),
             Column(quantity="upload_create_time"),
         ],
 
-        # filtro a sinistra (facoltativo)
+        # Filters panel (left): grouped like NOMAD
         menu=Menu(
             size="sm",
             items=[
-                MenuItemTerms(search_quantity=f"data.material#{schema_def}", options=15),
+                MenuItem(
+                    label="Filters",
+                    items=[
+                        MenuItemTerms(search_quantity=q("material"), options=30),
+                        MenuItemTerms(search_quantity=q("reference"), options=30),
+                    ],
+                ),
             ],
         ),
 
-        # ✅ widget centrale tipo “Transport Layers” (terms con barre e conteggi)
+        # Dashboard: only scatter plots
         dashboard=Dashboard(
             widgets=[
                 WidgetTerms(
                     title="Material",
-                    search_quantity=f"data.material#{schema_def}",
+                    search_quantity=q("material"),
                     showinput=True,
                     scale="linear",
                     size=200,
-                    layout={"lg": Layout(h=9, w=12, x=0, y=0, minH=6, minW=6)},
-                )
+                    layout={"lg": Layout(h=7, w=4, x=0, y=0, minH=6, minW=3)},
+                ),
+
+                WidgetScatterPlot(
+                    title="n vs k @ 400 nm",
+                    x=q("n_400nm"),
+                    y=q("k_400nm"),
+                    size=2000,
+                    layout={"lg": Layout(h=7, w=4, x=4, y=0, minH=6, minW=3)},
+                ),
+                WidgetScatterPlot(
+                    title="n vs k @ 700 nm",
+                    x=q("n_700nm"),
+                    y=q("k_700nm"),
+                    size=2000,
+                    layout={"lg": Layout(h=7, w=4, x=8, y=0, minH=6, minW=3)},
+                ),
+
+                WidgetScatterPlot(
+                    title="n vs k @ 800 nm",
+                    x=q("n_800nm"),
+                    y=q("k_800nm"),
+                    size=2000,
+                    layout={"lg": Layout(h=7, w=4, x=0, y=7, minH=6, minW=3)},
+                ),
+                WidgetScatterPlot(
+                    title="n vs k @ 900 nm",
+                    x=q("n_900nm"),
+                    y=q("k_900nm"),
+                    size=2000,
+                    layout={"lg": Layout(h=7, w=4, x=4, y=7, minH=6, minW=3)},
+                ),
+                WidgetScatterPlot(
+                    title="n vs k @ 1200 nm",
+                    x=q("n_1200nm"),
+                    y=q("k_1200nm"),
+                    size=2000,
+                    layout={"lg": Layout(h=7, w=4, x=8, y=7, minH=6, minW=3)},
+                ),
             ]
         ),
     ),

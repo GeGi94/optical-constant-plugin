@@ -50,11 +50,14 @@ class OpticalParserEntryPoint(ParserEntryPoint):
                     raise ValueError(f"No valid wavelength n k data found in {mainfile}")
 
                 arr = np.array(data, dtype=float)
+                # sort by wavelength
+                arr = arr[np.argsort(arr[:, 0])]
 
                 entry = OpticalConstantsEntry()
                 entry.material = material_name
 
                 dataset = OpticalDataset()
+                dataset.source_name = base
                 dataset.wavelength = arr[:, 0]
                 dataset.n = arr[:, 1]
                 dataset.k = arr[:, 2]
