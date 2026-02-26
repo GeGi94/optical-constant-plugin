@@ -3,7 +3,6 @@ from nomad.config.models.ui import (
     App,
     Column,
     Menu,
-    MenuItem,
     MenuItemTerms,
     SearchQuantities,
     Dashboard,
@@ -27,50 +26,33 @@ optical_app = AppEntryPoint(
         path="optical-properties",
         category="Materials",
         description="Browse optical n,k datasets and filter by material.",
-
-        # Quantities available in Explore (filters, columns, widgets)
         search_quantities=SearchQuantities(
             include=[
                 q("material"),
                 q("reference"),
-
-                # fixed-wavelength points for scatter plots
-                q("n_400nm"),  q("k_400nm"),
-                q("n_700nm"),  q("k_700nm"),
-                q("n_800nm"),  q("k_800nm"),
-                q("n_900nm"),  q("k_900nm"),
+                q("n_400nm"), q("k_400nm"),
+                q("n_700nm"), q("k_700nm"),
+                q("n_800nm"), q("k_800nm"),
+                q("n_900nm"), q("k_900nm"),
                 q("n_1200nm"), q("k_1200nm"),
             ]
         ),
-
-        # Only show entries of this schema type
         filters_locked={
             "section_defs.definition_qualified_name": [schema_def]
         },
-
-        # Results table: entry name, material, reference
         columns=[
             Column(quantity="entry_name", selected=True),
             Column(quantity=q("material"), label="Material", selected=True),
             Column(quantity=q("reference"), label="Reference", selected=True),
             Column(quantity="upload_create_time"),
         ],
-
-        # Filters panel (left): grouped like NOMAD
         menu=Menu(
             size="sm",
             items=[
-                MenuItem(
-                    label="Filters",
-                    items=[
-                        MenuItemTerms(search_quantity=q("material"), options=30),
-                        MenuItemTerms(search_quantity=q("reference"), options=30),
-                    ],
-                ),
+                MenuItemTerms(search_quantity=q("material"), options=30),
+                MenuItemTerms(search_quantity=q("reference"), options=30),
             ],
         ),
-
-        # Dashboard: only scatter plots
         dashboard=Dashboard(
             widgets=[
                 WidgetTerms(
@@ -81,7 +63,6 @@ optical_app = AppEntryPoint(
                     size=200,
                     layout={"lg": Layout(h=7, w=4, x=0, y=0, minH=6, minW=3)},
                 ),
-
                 WidgetScatterPlot(
                     title="n vs k @ 400 nm",
                     x=q("n_400nm"),
@@ -96,7 +77,6 @@ optical_app = AppEntryPoint(
                     size=2000,
                     layout={"lg": Layout(h=7, w=4, x=8, y=0, minH=6, minW=3)},
                 ),
-
                 WidgetScatterPlot(
                     title="n vs k @ 800 nm",
                     x=q("n_800nm"),
