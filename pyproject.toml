@@ -21,4 +21,8 @@ optical_schema = "optical_constant_plugin.schema_packages.mypackage:optical_sche
 optical_parser = "optical_constant_plugin.parsers.myparsers:optical_parser"
 optical_normalizer = "optical_constant_plugin.normalizers.mynormalizer:optical_normalizer"
 optical_app        = "optical_constant_plugin.apps.myapp:optical_app"
+electrical_parser = "optical_constant_plugin.parsers.myparsers:electrical_parser"
+electrical_normalizer = "optical_constant_plugin.normalizers.mynormalizer:electrical_normalizer"
+electrical_app = "optical_constant_plugin.apps.myapp:electrical_app"
+materials_app = "optical_constant_plugin.apps.myapp:materials_app"
 
