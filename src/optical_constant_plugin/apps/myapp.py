@@ -128,37 +128,52 @@ electrical_app = AppEntryPoint(
 # MATERIALS APP (UNIFIED VIEW)
 # =========================
 
+# =========================
+# MATERIALS APP (UNIFIED VIEW) - FIXED
+# =========================
+
+schema_q = "section_defs.definition_qualified_name"
+
 materials_app = AppEntryPoint(
     name="materials_app",
-    description="Browse optical + electrical entries and group them by material via filters.",
+    description="Browse optical + electrical entries. Use Property type to switch schemas.",
     app=App(
-        label="Materials (all)",
+        label="Materials",
         path="materials",
         category="Materials",
-        description="Unified view: filter by material to see optical and electrical entries together.",
+        description="Unified view: choose Optical/Electrical via Property type, then filter by material.",
         search_quantities=SearchQuantities(
             include=[
+                schema_q,
+
                 # optical
                 qopt("material"),
                 qopt("reference"),
+
                 # electrical
                 qel("material"),
+                qel("reference"),
                 qel("Eg"),
                 qel("chi"),
                 qel("eps_r"),
             ]
         ),
-        filters_locked={
-            "section_defs.definition_qualified_name": [schema_def_opt, schema_def_el]
-        },
+        # lock the app to only these two entry types
+        filters_locked={schema_q: [schema_def_opt, schema_def_el]},
         menu=Menu(
             size="sm",
             items=[
-                # Two material filters (one per schema)
+                # 1) the key: choose which entry type to explore
+                MenuItemTerms(search_quantity=schema_q, options=10),
+
+                # 2) material filters (cannot be merged into one in NOMAD Explore)
                 MenuItemTerms(search_quantity=qopt("material"), options=50),
                 MenuItemTerms(search_quantity=qel("material"), options=50),
+
+                # optional histograms (mostly relevant for electrical)
                 MenuItemHistogram(x=Axis(search_quantity=qel("Eg"))),
                 MenuItemHistogram(x=Axis(search_quantity=qel("chi"))),
+                MenuItemHistogram(x=Axis(search_quantity=qel("eps_r"))),
             ],
         ),
         dashboard=Dashboard(
@@ -177,10 +192,18 @@ materials_app = AppEntryPoint(
         ),
         columns=[
             Column(quantity="entry_name", selected=True),
+            Column(quantity=schema_q, label="Type", selected=True),
+
             Column(quantity=qopt("material"), label="Material (opt)", selected=True),
             Column(quantity=qel("material"), label="Material (el)", selected=True),
+
+            Column(quantity=qopt("reference"), label="Ref (opt)", selected=False),
+            Column(quantity=qel("reference"), label="Ref (el)", selected=False),
+
             Column(quantity=qel("Eg"), label="Eg (eV)", selected=False),
             Column(quantity=qel("chi"), label="χ (eV)", selected=False),
+            Column(quantity=qel("eps_r"), label="εr", selected=False),
+
             Column(quantity="upload_create_time", selected=True),
         ],
     ),
