@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 dependencies = ["nomad-lab"]
 
 [project.optional-dependencies]
-test = [
+dev = [
     "pytest"
     ]
 
