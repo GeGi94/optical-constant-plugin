@@ -12,7 +12,7 @@ dependencies = ["nomad-lab"]
 
 [project.optional-dependencies]
 dev = [
-    "pytest"
+    "pytest",
     ]
 
 [tool.setuptools]
