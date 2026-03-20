@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Optical constant plugin"
 authors = [{name = "Gemma"}]
 requires-python = ">=3.10"
-dependencies = ["nomad-lab"]
+dependencies = ["nomad-lab","pytest"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
